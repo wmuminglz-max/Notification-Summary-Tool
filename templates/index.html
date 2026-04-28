@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通知摘要工具 | Notification Summarizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-bell"></i> 通知摘要工具</h1>
+            <p class="subtitle">将一份或多份通知整理成清晰待办，并按截止时间优先处理</p>
+        </header>
+
+        <div class="settings-panel">
+            <button class="settings-btn" onclick="toggleSettings()">
+                <i class="fas fa-cog"></i> 设置
+            </button>
+            <div class="settings-content" id="settingsContent">
+                <div class="setting-item">
+                    <label for="apiKey">MiMo API Key:</label>
+                    <input type="password" id="apiKey" placeholder="请输入小米 MiMo API Key">
+                </div>
+                <div class="setting-item">
+                    <label for="model">模型选择:</label>
+                    <select id="model">
+                        <option value="mimo-v2.5-pro">MiMo-V2.5-Pro (默认)</option>
+                        <option value="mimo-v2.5">MiMo-V2.5</option>
+                    </select>
+                </div>
+                <button class="save-btn" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> 保存配置
+                </button>
+            </div>
+        </div>
+
+        <main class="main-content">
+            <section class="input-section">
+                <h2><i class="fas fa-edit"></i> 输入通知</h2>
+
+                <div class="identity-bar">
+                    <label for="userRole"><i class="fas fa-user-tag"></i> 用户身份</label>
+                    <select id="userRole">
+                        <option value="普通学生" selected>普通学生</option>
+                        <option value="班长（学生）">班长（学生）</option>
+                        <option value="团支书（学生）">团支书（学生）</option>
+                        <option value="学习委员（学生）">学习委员（学生）</option>
+                    </select>
+                    <span class="identity-tip">会优先保留与你当前身份相关的时间节点与待办</span>
+                </div>
+
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" multiple onchange="handleFileSelect(event)">
+                    <div class="upload-placeholder" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>点击或拖拽多个文件到此处</p>
+                        <p class="file-types">支持 PDF、Word、TXT 文件，可一次上传多个通知</p>
+                    </div>
+                    <div class="file-preview-list" id="filePreviewList" style="display: none;"></div>
+                </div>
+
+                <div class="text-input-area">
+                    <label for="notificationText">或直接粘贴通知内容:</label>
+                    <textarea id="notificationText" placeholder="在此粘贴通知内容...&#10;&#10;支持：&#10;1. 只上传多个通知文件&#10;2. 文件 + 补充说明一起处理&#10;3. 直接粘贴多条通知"></textarea>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="primary-btn" onclick="summarize()">
+                        <i class="fas fa-magic"></i> 生成摘要
+                    </button>
+                    <button class="secondary-btn" onclick="generateTodo()">
+                        <i class="fas fa-list-check"></i> 整理为待办
+                    </button>
+                    <button class="secondary-btn" onclick="clearAll()">
+                        <i class="fas fa-eraser"></i> 清空
+                    </button>
+                </div>
+            </section>
+
+            <section class="output-section">
+                <h2><i class="fas fa-clipboard-list"></i> 结果</h2>
+
+                <div class="loading" id="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p id="loadingText">正在处理中，请稍候...</p>
+                </div>
+
+                <div class="result-container" id="resultContainer" style="display: none;">
+                    <div class="result-meta" id="resultMeta"></div>
+                    <div class="result-content" id="resultContent"></div>
+                    <div class="result-actions">
+                        <button class="copy-btn" onclick="copyResult()">
+                            <i class="fas fa-copy"></i> 一键复制
+                        </button>
+                        <button class="download-btn" onclick="downloadResult()">
+                            <i class="fas fa-download"></i> 下载
+                        </button>
+                    </div>
+                </div>
+
+                <div class="error-container" id="errorContainer" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorMessage"></span>
+                </div>
+            </section>
+        </main>
+
+        <section class="chat-section">
+            <h2><i class="fas fa-comments"></i> 继续对话</h2>
+            <p class="hint">对话会自动结合当前多份通知原文、摘要结果和补充问题</p>
+
+            <div class="chat-container" id="chatContainer">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="输入问题..." onkeypress="handleChatKeypress(event)">
+                    <button onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>Powered by <a href="https://platform.xiaomimimo.com" target="_blank">Xiaomi MiMo</a></p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
