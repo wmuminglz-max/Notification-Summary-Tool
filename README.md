@@ -22,7 +22,7 @@
 ### 1. 克隆项目
 
 ```bash
-git clone <https://github.com/wmuminglz-max/Notification-Summary-Tool.get>
+git clone [https://github.com/wmuminglz-max/Notification-Summary-Tool.get](https://github.com/wmuminglz-max/Notification-Summary-Tool.get)
 cd notification-summarizer
 ```
 
